@@ -24,7 +24,7 @@ Memory Bank is an MCP server that helps teams create, manage, and access structu
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/memory-bank-mcp.git
+git clone https://github.com/tuncer-byte/memory-bank-mcp.git
 cd memory-bank-mcp
 
 # Install dependencies
