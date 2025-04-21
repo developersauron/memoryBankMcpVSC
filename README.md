@@ -8,6 +8,10 @@
   </p>
 </div>
 
+<a href="https://glama.ai/mcp/servers/@tuncer-byte/memory-bank-MCP">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@tuncer-byte/memory-bank-MCP/badge" alt="Memory Bank MCP server" />
+</a>
+
 Memory Bank is an MCP server that helps teams create, manage, and access structured project documentation. It generates and maintains a set of interconnected Markdown documents that capture different aspects of project knowledge, from high-level goals to technical details and day-to-day progress.
 
 ## Features
