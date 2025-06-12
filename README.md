@@ -1,23 +1,41 @@
 # Memory Bank MCP
 
 <div align="center">
-  <img src="https://raw.githubusercontent.com/modelcontextprotocol/mcp/main/icon.png" height="128">
+  <img src="https://github.com/tuncer-byte/byte/blob/main/media/icons/icon-white.png" height="128">
   <h1>Memory Bank MCP</h1>
   <p>
-    <b>A structured documentation system for project knowledge management via Model Context Protocol (MCP)</b>
+    <b>Structured project knowledge management for LLMs via Model Context Protocol (MCP)</b>
   </p>
 </div>
 
-Memory Bank is an MCP server that helps teams create, manage, and access structured project documentation. It generates and maintains a set of interconnected Markdown documents that capture different aspects of project knowledge, from high-level goals to technical details and day-to-day progress.
+---
+
+> **Note:** This is not a traditional Node.js application. Memory Bank MCP is an **MCP server**—a component in the [Model Context Protocol](https://modelcontextprotocol.io/introduction) ecosystem. It exposes project knowledge to LLM-powered agents and tools using a standardized protocol, enabling seamless integration with AI clients (e.g., Claude Desktop, IDEs, or custom LLM agents).
+
+---
+
+## What is Model Context Protocol (MCP)?
+
+MCP is an open protocol that standardizes how applications provide context to LLMs. Think of MCP like a USB-C port for AI: it provides a universal way to connect AI models to data sources and tools, both locally and remotely. MCP enables:
+
+- **Plug-and-play integrations** between LLMs, data, and tools
+- **Switching between LLM providers** with minimal friction
+- **Secure, modular architecture** for building AI workflows
+
+Learn more: [MCP Introduction](https://modelcontextprotocol.io/introduction)
+
+## About Memory Bank MCP
+
+Memory Bank MCP is an **MCP server** that helps teams create, manage, and access structured project documentation. It generates and maintains interconnected Markdown documents capturing all aspects of project knowledge, from high-level goals to technical details and daily progress. It is designed to be accessed by MCP-compatible clients and LLM agents.
 
 ## Features
 
-- **AI-Generated Documentation**: Leverages Gemini API to automatically generate comprehensive project documentation
+- **AI-Generated Documentation**: Uses Gemini API to generate and update project documentation
 - **Structured Knowledge System**: Maintains six core document types in a hierarchical structure
-- **MCP Integration**: Implements the Model Context Protocol for seamless integration with AI assistants
-- **Customizable Location**: Specify where you want your Memory Bank directory created
+- **MCP Server**: Implements the Model Context Protocol for integration with LLM agents and tools
+- **Customizable Storage**: Choose where your Memory Bank directory is created
 - **Document Templates**: Pre-defined templates for project brief, product context, system patterns, etc.
-- **AI-Assisted Updates**: Update documents manually or regenerate them with AI assistance
+- **AI-Assisted Updates**: Update documents manually or regenerate them with AI
 - **Advanced Querying**: Search across all documents with context-aware relevance ranking
 
 ## Installation
@@ -30,32 +48,30 @@ cd memory-bank-mcp
 # Install dependencies
 npm install
 
-# Create .env file with your Gemini API key (optional)
+# (Optional) Create .env file with your Gemini API key
 echo "GEMINI_API_KEY=your_api_key_here" > .env
 ```
 
 ## Usage
 
+> **Note:** Memory Bank MCP is intended to be run as an MCP server, not as a standalone app. You typically launch it as part of an MCP workflow, and connect to it from an MCP-compatible client (such as Claude Desktop or your own LLM agent).
+
 ### Development Mode
 
 ```bash
-# Start in development mode
 npm run dev
 ```
 
 ### Production Mode
 
 ```bash
-# Build the project
 npm run build
-
-# Start in production mode
 npm run start
 ```
 
-### MCP Configuration
+### MCP Integration
 
-To integrate Memory Bank with the Model Context Protocol (MCP), add the following configuration to your `mcp.json` file:
+To connect Memory Bank MCP to your MCP client, add the following to your `mcp.json` configuration:
 
 ```json
 {
@@ -69,23 +85,11 @@ To integrate Memory Bank with the Model Context Protocol (MCP), add the followin
 }
 ```
 
-Replace `/path/to/memory-bank-mcp/dist/index.js` with the absolute path to your built index.js file, and add your Gemini API key (if applicable).
+Replace `/path/to/memory-bank-mcp/dist/index.js` with the absolute path to your built file, and add your Gemini API key if needed.
 
-Example:
+---
 
-```json
-{
-  "memoryBank": {
-    "command": "node",
-    "args": ["/Users/username/memory-bank-mcp/dist/index.js"],
-    "env": {
-      "GEMINI_API_KEY": "AIzaSyXXXXXXXXXXXXXXXXXXXXXXXX"
-    }
-  }
-}
-```
-
-## MCP Tools
+## MCP Tools Exposed by Memory Bank
 
 Memory Bank MCP provides the following tools via the Model Context Protocol:
 
@@ -178,4 +182,4 @@ Memory Bank organizes project knowledge into six core document types:
 
 ## License
 
-MIT 
+MIT
