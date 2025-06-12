@@ -8,6 +8,10 @@
   </p>
 </div>
 
+<a href="https://glama.ai/mcp/servers/@tuncer-byte/memory-bank-MCP">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@tuncer-byte/memory-bank-MCP/badge" alt="Memory Bank MCP server" />
+</a>
+
 ---
 
 > **Note:** This is not a traditional Node.js application. Memory Bank MCP is an **MCP server**—a component in the [Model Context Protocol](https://modelcontextprotocol.io/introduction) ecosystem. It exposes project knowledge to LLM-powered agents and tools using a standardized protocol, enabling seamless integration with AI clients (e.g., Claude Desktop, IDEs, or custom LLM agents).
@@ -42,7 +46,7 @@ Memory Bank MCP is an **MCP server** that helps teams create, manage, and access
 
 ```bash
 # Clone the repository
-git clone https://github.com/yourusername/memory-bank-mcp.git
+git clone https://github.com/tuncer-byte/memory-bank-mcp.git
 cd memory-bank-mcp
 
 # Install dependencies
