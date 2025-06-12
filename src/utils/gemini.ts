@@ -3,9 +3,15 @@ import dotenv from 'dotenv';
 import fs from 'fs-extra';
 import path from 'path';
 
-const DEFAULT_API_KEY = 'AIzaSyBCwxeNGM9Jwnl4C5iqfgZtlsd4RcFanWE';
 
-let apiKey = DEFAULT_API_KEY;
+// Load environment variables
+dotenv.config();
+
+// Default API key placeholder - replace with your actual API key
+const DEFAULT_API_KEY = 'YOUR_DEFAULT_API_KEY';
+
+// Initialize API key
+let apiKey = process.env.GEMINI_API_KEY;
 
 console.log('Checking for Gemini API key...');
 if (!apiKey) {
@@ -25,20 +31,21 @@ if (!apiKey) {
   console.log('Using default API key.');
 }
 
-if (apiKey === 'your_gemini_api_key_here') {
-  console.warn('GEMINI_API_KEY is set to the example value. Using default API key instead.');
-  apiKey = DEFAULT_API_KEY;
+if (apiKey === 'your_gemini_api_key_here' || apiKey === 'YOUR_DEFAULT_API_KEY') {
+  console.warn('GEMINI_API_KEY is set to the example value. Please set a valid API key in your .env file.');
+  throw new Error('Invalid API key. Please set a valid GEMINI_API_KEY in your .env file.');
 }
 
 console.log('Gemini API key found.');
 
+// Initialize Gemini client
 let genAI: GoogleGenerativeAI;
 try {
   genAI = new GoogleGenerativeAI(apiKey);
   console.log('Gemini client created successfully.');
 } catch (error) {
   console.error('Failed to create Gemini client:', error);
-  throw new Error(`Gemini client oluşturulamadı: ${error}`);
+  throw new Error(`Gemini client creation failed: ${error}`);
 }
 
 const safetySettings = [
@@ -78,8 +85,8 @@ export async function generateContent(prompt: string): Promise<string> {
     const response = result.response;
     return response.text();
   } catch (error) {
-    console.error('Gemini API hatası:', error);
-    throw new Error(`Belge içeriği üretilirken hata oluştu: ${error}`);
+    console.error('Gemini API error:', error);
+    throw new Error(`Error generating document content: ${error}`);
   }
 }
 
@@ -94,8 +101,8 @@ export async function fillTemplate(templatePath: string, values: Record<string, 
     
     return templateContent;
   } catch (error) {
-    console.error('Şablon doldurma hatası:', error);
-    throw new Error(`Şablon doldurulurken hata oluştu: ${error}`);
+    console.error('Template filling error:', error);
+    throw new Error(`Error filling template: ${error}`);
   }
 }
 
@@ -170,7 +177,7 @@ Create the following documents for this project:
   const results: Record<string, string> = {};
 
   for (const [docType, docPrompt] of Object.entries(documentTypes)) {
-    console.log(`${docType} belgesi oluşturuluyor...`);
+    console.log(`Creating ${docType} document...`);
     
     const fullPrompt = `${basePrompt}${docPrompt}\n\nPlease create content only for the "${docType}" document. Use Markdown format with section headers marked by ##. At the end of the document, add the note "Created on ${currentDate}".`;
     
@@ -179,4 +186,4 @@ Create the following documents for this project:
   }
 
   return results;
-} 
+}
