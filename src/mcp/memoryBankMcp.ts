@@ -609,8 +609,16 @@ server.tool(
 );
 
 // Create VS Code Copilot Instructions
+/**
+ * Generates a .github/copilot-instructions.md file for the project.
+ * This tool creates detailed VS Code Copilot instructions based on the provided project purpose and location.
+ * Parameters:
+ *   - projectPurpose: Detailed description of the project purpose. This will define the project's main goals and scope.
+ *   - location: Absolute path where .github/copilot-instructions.md will be created.
+ */
 server.tool(
   'create_vscode_instructions',
+  'Creates a .github/copilot-instructions.md file for VS Code Copilot usage. Generates detailed instructions based on project purpose and location.',
   {
     projectPurpose: z.string()
       .min(10, 'Project purpose must be at least 10 characters')
