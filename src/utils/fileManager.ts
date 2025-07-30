@@ -39,9 +39,9 @@ This directory serves as a structured repository for your project information an
 - **progress.md**: Progress tracking, milestones, and project history
 
 ## Document Management
-This Memory Bank uses a structured approach to organize project knowledge. Each document serves a specific purpose in the project lifecycle and should be maintained according to the rules specified in the \`.byterules\` file.
+This Memory Bank uses a structured approach to organize project knowledge. Each document serves a specific purpose in the project lifecycle and should be maintained according to the rules specified in the \`copilot-instructions.md\` file.
 
-See the \`.byterules\` file for detailed guidelines on how to maintain and update these documents.
+See the \`copilot-instructions.md\` file for detailed guidelines on how to maintain and update these documents.
 `;
     try {
       await fs.writeFile(readmePath, readmeContent, 'utf-8');
@@ -189,13 +189,13 @@ export async function exportMemoryBank(sourceDir: string, format: string = 'fold
 }
 
 /**
- * Reads the .byterules file and returns its content
- * @param directory Directory where .byterules file is located
- * @returns Content of .byterules file
+ * Reads the copilot-instructions.md file and returns its content
+ * @param directory Directory where copilot-instructions.md file is located
+ * @returns Content of copilot-instructions.md file
  */
 export async function readByteRules(directory: string): Promise<string> {
   try {
-    const byteRulesPath = path.join(directory, '.byterules');
+    const byteRulesPath = path.join(directory, 'copilot-instructions.md');
     
     // Check if file exists
     if (!await fs.pathExists(byteRulesPath)) {
@@ -214,7 +214,7 @@ export async function readByteRules(directory: string): Promise<string> {
 
 /**
  * Gets document workflow information based on document type
- * @param directory Directory where .byterules file is located
+ * @param directory Directory where copilot-instructions.md file is located
  * @param documentType Type of document to get workflow for
  * @returns Workflow information for the document
  */
@@ -293,7 +293,7 @@ export async function getDocumentWorkflow(directory: string, documentType: strin
 
 /**
  * Creates a structured template for a document based on ByteRules
- * @param directory Directory where .byterules file is located
+ * @param directory Directory where copilot-instructions.md file is located
  * @param documentType Type of document to create template for
  * @returns Structured template content
  */

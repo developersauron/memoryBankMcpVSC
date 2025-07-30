@@ -1,20 +1,20 @@
 import { startServer } from './mcp/memoryBankMcp.js';
 
-// Ana fonksiyon
+// Main function
 async function main() {
-  console.log('Memory Bank MCP uygulaması başlatılıyor...');
+  console.log('Starting Memory Bank MCP application...');
   
   try {
-    // MCP sunucusunu başlat
+    // Start MCP server
     await startServer();
   } catch (error) {
-    console.error('Hata:', error);
+    console.error('Error:', error);
     process.exit(1);
   }
 }
 
-// Uygulamayı başlat
+// Start the application
 main().catch(error => {
-  console.error('Kritik hata:', error);
+  console.error('Critical error:', error);
   process.exit(1);
 }); 

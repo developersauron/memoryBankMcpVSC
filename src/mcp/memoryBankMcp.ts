@@ -1,18 +1,17 @@
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { z } from 'zod';
-import path from 'path';
 import fs from 'fs-extra';
-import os from 'os';
-import { generateAllDocuments } from '../utils/gemini.js';
-import { 
-  createMemoryBankStructure, 
-  saveDocument, 
-  readDocument, 
-  readAllDocuments, 
-  exportMemoryBank 
+import path from 'path';
+import { z } from 'zod';
+import {
+  createMemoryBankStructure,
+  exportMemoryBank,
+  readAllDocuments,
+  readDocument,
+  saveDocument
 } from '../utils/fileManager.js';
-import { generateCursorRules } from '../utils/cursorRulesGenerator.js';
+import { generateAllDocuments } from '../utils/gemini.js';
+import { generateCopilotInstructions } from '../utils/vscodeInstructionsGenerator.js';
 
 // Create MCP server
 const server = new McpServer({
@@ -21,8 +20,8 @@ const server = new McpServer({
 });
 
 // Import URL and fileURLToPath for ESM compatible __dirname alternative
-import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import { fileURLToPath } from 'url';
 
 // Helper function to get the workspace root directory
 const getWorkspaceRootDir = () => {
@@ -609,15 +608,15 @@ server.tool(
   }
 );
 
-// Create Cursor Rules
+// Create VS Code Copilot Instructions
 server.tool(
-  'create_cursor_rules',
+  'create_vscode_instructions',
   {
     projectPurpose: z.string()
-      .min(10, 'Proje amacı en az 10 karakter olmalıdır')
-      .describe('Proje amacını detaylı bir şekilde açıklayan bir metin giriniz. Bu metin projenin temel hedeflerini ve kapsamını belirleyecektir.'),
+      .min(10, 'Project purpose must be at least 10 characters')
+      .describe('Detailed description of the project purpose. This will define the project\'s main goals and scope.'),
     location: z.string()
-      .describe('Absolute path where cursor-rules will be created')
+      .describe('Absolute path where .github/copilot-instructions.md will be created')
   },
   async ({ projectPurpose, location }) => {
     try {
@@ -626,7 +625,7 @@ server.tool(
       console.log(`Node version: ${process.version}`);
       console.log(`Platform: ${process.platform}`);
       
-      // Determine where to create the .cursor directory
+      // Determine where to create the .github directory
       let baseDir;
       
       if (location) {
@@ -645,12 +644,12 @@ server.tool(
         console.log(`No location specified, using current directory as base: ${baseDir}`);
       }
       
-      // Create .cursor directory in the base directory
-      const cursorDir = path.join(baseDir, '.cursor');
-      console.log(`Will create Cursor Rules at: ${cursorDir}`);
+      // Create .github directory in the base directory
+      const githubDir = path.join(baseDir, '.github');
+      console.log(`Will create VS Code Instructions at: ${githubDir}`);
       
       // Ensure parent directory exists if needed
-      const parentDir = path.dirname(cursorDir);
+      const parentDir = path.dirname(githubDir);
       try {
         await fs.ensureDir(parentDir);
         console.log(`Ensured parent directory exists: ${parentDir}`);
@@ -659,59 +658,59 @@ server.tool(
         throw new Error(`Cannot create or access parent directory: ${error}`);
       }
       
-      // Ensure .cursor directory exists
+      // Ensure .github directory exists
       try {
-        await fs.ensureDir(cursorDir);
-        console.log(`Created .cursor directory: ${cursorDir}`);
+        await fs.ensureDir(githubDir);
+        console.log(`Created .github directory: ${githubDir}`);
       } catch (error) {
-        console.error(`Error creating .cursor directory: ${error}`);
-        throw new Error(`Cannot create .cursor directory: ${error}`);
+        console.error(`Error creating .github directory: ${error}`);
+        throw new Error(`Cannot create .github directory: ${error}`);
       }
       
-      // Create the cursor-rules.mdc file
-      const cursorRulesPath = path.join(cursorDir, 'cursor-rules.mdc');
-      console.log(`Will create cursor-rules.mdc at: ${cursorRulesPath}`);
+      // Create the copilot-instructions.md file
+      const instructionsPath = path.join(githubDir, 'copilot-instructions.md');
+      console.log(`Will create copilot-instructions.md at: ${instructionsPath}`);
       
-      // Generate content for the rules file based on project purpose
-      console.log(`Generating cursor rules content for purpose: ${projectPurpose}`);
+      // Generate content for the instructions file based on project purpose
+      console.log(`Generating VS Code copilot instructions for purpose: ${projectPurpose}`);
       try {
-        const cursorRulesContent = await generateCursorRules(projectPurpose);
+        const instructionsContent = await generateCopilotInstructions(projectPurpose);
         
         // Save the file
         try {
-          await fs.writeFile(cursorRulesPath, cursorRulesContent, 'utf-8');
-          console.log(`Created cursor-rules.mdc at: ${cursorRulesPath}`);
+          await fs.writeFile(instructionsPath, instructionsContent, 'utf-8');
+          console.log(`Created copilot-instructions.md at: ${instructionsPath}`);
         } catch (error) {
-          console.error(`Error creating cursor-rules.mdc file: ${error}`);
-          throw new Error(`Cannot create cursor-rules.mdc file: ${error}`);
+          console.error(`Error creating copilot-instructions.md file: ${error}`);
+          throw new Error(`Cannot create copilot-instructions.md file: ${error}`);
         }
         
         return {
           content: [{ 
             type: 'text', 
-            text: `✅ Cursor Rules successfully created!\n\nLocation: ${cursorRulesPath}` 
+            text: `✅ VS Code Copilot Instructions successfully created!\n\nLocation: ${instructionsPath}` 
           }]
         };
-      } catch (ruleGenError) {
-        console.error(`Error generating cursor rules content: ${ruleGenError}`);
+      } catch (instructionGenError) {
+        console.error(`Error generating VS Code instructions content: ${instructionGenError}`);
         
-        // Detaylı hata mesajı oluştur
-        let errorMessage = 'Error generating Cursor Rules content: ';
-        if (ruleGenError instanceof Error) {
-          errorMessage += ruleGenError.message;
+        // Provide detailed error message
+        let errorMessage = 'Error generating VS Code Instructions content: ';
+        if (instructionGenError instanceof Error) {
+          errorMessage += instructionGenError.message;
           
-          // API key ile ilgili hata mesajlarını daha açıklayıcı hale getir
-          if (ruleGenError.message.includes('GEMINI_API_KEY') || ruleGenError.message.includes('API key')) {
-            errorMessage += '\n\nÖnemli: Bu özellik Gemini API kullanıyor. Lütfen .env dosyasında geçerli bir GEMINI_API_KEY tanımladığınızdan emin olun.';
+          // Make API key error messages more descriptive
+          if (instructionGenError.message.includes('GEMINI_API_KEY') || instructionGenError.message.includes('API key')) {
+            errorMessage += '\n\nImportant: This feature uses Gemini API. Please make sure you have defined a valid GEMINI_API_KEY in your .env file.';
           }
         } else {
-          errorMessage += String(ruleGenError);
+          errorMessage += String(instructionGenError);
         }
         
         throw new Error(errorMessage);
       }
     } catch (error) {
-      console.error('Error creating Cursor Rules:', error);
+      console.error('Error creating VS Code Instructions:', error);
       return {
         content: [{ type: 'text', text: `❌ Error: ${error instanceof Error ? error.message : String(error)}` }],
         isError: true

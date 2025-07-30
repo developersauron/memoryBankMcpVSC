@@ -1,13 +1,19 @@
 {
   "name": "memory-bank-mcp",
   "version": "1.0.0",
-  "description": "MCP tabanlı Memory Bank: metin tabanlı bilgileri depolama ve erişim aracı",
+  "description": "MCP-based Memory Bank: Structured project knowledge management for LLMs",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
-    "dev": "ts-node src/index.ts"
+    "dev": "ts-node --esm src/index.ts",
+    "dev:debug": "node --inspect --loader ts-node/esm src/index.ts",
+    "clean": "rm -rf dist",
+    "prebuild": "npm run clean",
+    "type-check": "tsc --noEmit",
+    "lint": "echo 'Add ESLint configuration for better code quality'",
+    "test": "echo 'Add tests for MCP tools'"
   },
   "dependencies": {
     "@google/generative-ai": "^0.2.0",

@@ -60,6 +60,29 @@ echo "GEMINI_API_KEY=your_api_key_here" > .env
 
 > **Note:** Memory Bank MCP is intended to be run as an MCP server, not as a standalone app. You typically launch it as part of an MCP workflow, and connect to it from an MCP-compatible client (such as Claude Desktop or your own LLM agent).
 
+### VS Code Development
+
+For VS Code development, use the integrated tools:
+
+```bash
+# Open in VS Code
+code .
+
+# Use VS Code tasks (Ctrl+Shift+P → "Tasks: Run Task")
+# - build: Compile TypeScript
+# - dev: Development mode with ts-node
+# - start: Build and run MCP server
+
+# Or use terminal
+npm run dev
+```
+
+**VS Code Features:**
+- TypeScript debugging with breakpoints (F5)
+- Integrated terminal for MCP server
+- GitHub Copilot Chat for MCP tool development
+- Auto-import and IntelliSense for MCP schemas
+
 ### Development Mode
 
 ```bash
