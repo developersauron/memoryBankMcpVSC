@@ -127,36 +127,42 @@ server.tool(
         process.env.GEMINI_API_KEY = geminiApiKey;
       }
 
-      // First, set up the .byterules file before creating other files
-      // This ensures the byterules file is in place before other operations
-      const byterulesDest = path.join(MEMORY_BANK_DIR, '.byterules');
+      // First, set up the copilot-instructions.md file in the workspace root
+      // This file replaces the traditional .byterules and serves as the orchestration guide
+      const workspaceRoot = getWorkspaceRootDir();
+      const githubDir = path.join(workspaceRoot, '.github');
+      const copilotInstructionsDest = path.join(githubDir, 'copilot-instructions.md');
       
       try {
-        // Debug: List all search paths we're going to try
-        console.log('Searching for .byterules template file...');
+        // Ensure .github directory exists
+        await fs.ensureDir(githubDir);
+        console.log(`Ensured .github directory exists: ${githubDir}`);
+        
+        // Debug: List all search paths we're going to try for copilot-instructions template
+        console.log('Searching for copilot-instructions template file...');
         
         // Get the ESM compatible dirname
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = dirname(__filename);
         console.log(`Current file directory: ${__dirname}`);
         
-        // Try multiple possible locations for the .byterules file
+        // Try multiple possible locations for the copilot-instructions template
         const possiblePaths = [
-          path.join(process.cwd(), 'src', 'templates', '.byterules'),          // From current working dir
-          path.join(__dirname, '..', 'templates', '.byterules'),               // From mcp dir to templates
-          path.join(__dirname, '..', '..', 'src', 'templates', '.byterules'),  // From mcp dir up two levels
-          path.join(process.cwd(), 'templates', '.byterules'),                 // Direct templates folder
-          path.join(process.cwd(), '.byterules')                               // Root of project
+          path.join(process.cwd(), 'src', 'templates', 'copilot-instructions.md'),          // From current working dir
+          path.join(__dirname, '..', 'templates', 'copilot-instructions.md'),               // From mcp dir to templates
+          path.join(__dirname, '..', '..', 'src', 'templates', 'copilot-instructions.md'),  // From mcp dir up two levels
+          path.join(process.cwd(), 'templates', 'copilot-instructions.md'),                 // Direct templates folder
+          copilotInstructionsDest                                                          // Check if already exists
         ];
         
-        // Manually create .byterules content as fallback
-        const defaultByterules = `# Memory Bank Document Orchestration Standard
+        // Manually create copilot-instructions.md content as fallback
+        const defaultCopilotInstructions = `# Memory Bank Document Orchestration Standard
 
 ## Directory Validation
 
 Before any operation (create/update/reference/review), ensure you are in the correct project root directory. Specifically:
 
-- A valid Memory Bank system **must contain** this \`.byterules\` file at its root.
+- A valid Memory Bank system **must contain** this \`.github/copilot-instructions.md\` file at the workspace root.
 - If this file is missing, halt operations and **navigate to the correct directory** using:
 
 \`\`\`bash
@@ -169,7 +175,7 @@ Failing to validate the directory can lead to misplaced or inconsistent document
 
 ## System Overview
 
-Memory Bank is a structured documentation system designed to maintain project knowledge in an organized, accessible format. This \`.byterules\` file serves as the standard guide for how the system works across all projects.
+Memory Bank is a structured documentation system designed to maintain project knowledge in an organized, accessible format. This \`.github/copilot-instructions.md\` file serves as the standard guide for how the system works across all projects.
 
 ## Standard Document Types
 
@@ -248,32 +254,32 @@ Each document follows a standard lifecycle:
 `;
         
         // Try each path and use the first one that exists
-        let bytesRulesFound = false;
+        let copilotInstructionsFound = false;
         
         for (const testPath of possiblePaths) {
           console.log(`Checking path: ${testPath}`);
           
           if (await fs.pathExists(testPath)) {
-            console.log(`✓ Found .byterules at: ${testPath}`);
-            await fs.copy(testPath, byterulesDest);
-            console.log(`Standard .byterules file copied to: ${byterulesDest}`);
-            bytesRulesFound = true;
+            console.log(`✓ Found copilot-instructions.md at: ${testPath}`);
+            await fs.copy(testPath, copilotInstructionsDest);
+            console.log(`Standard copilot-instructions.md file copied to: ${copilotInstructionsDest}`);
+            copilotInstructionsFound = true;
             break;
           } else {
             console.log(`✗ Not found at: ${testPath}`);
           }
         }
         
-        // If no .byterules file found, create one with the default content
-        if (!bytesRulesFound) {
-          console.log('No .byterules template found, creating default');
-          await fs.writeFile(byterulesDest, defaultByterules, 'utf-8');
-          console.log(`Default .byterules file created at: ${byterulesDest}`);
+        // If no copilot-instructions template found, create one with the default content
+        if (!copilotInstructionsFound) {
+          console.log('No copilot-instructions template found, creating default');
+          await fs.writeFile(copilotInstructionsDest, defaultCopilotInstructions, 'utf-8');
+          console.log(`Default copilot-instructions.md file created at: ${copilotInstructionsDest}`);
         }
         
       } catch (error) {
-        console.error(`Error setting up .byterules file: ${error}`);
-        throw new Error(`Failed to set up .byterules file: ${error}`);
+        console.error(`Error setting up copilot-instructions.md file: ${error}`);
+        throw new Error(`Failed to set up copilot-instructions.md file: ${error}`);
       }
       
       // Now create the full structure
@@ -292,7 +298,7 @@ Each document follows a standard lifecycle:
         content: [
           { 
             type: 'text', 
-            text: `✅ Memory Bank successfully created!\n\nLocation: ${MEMORY_BANK_DIR}\n\nGenerated Documents:\n- projectbrief.md\n- productContext.md\n- systemPatterns.md\n- techContext.md\n- activeContext.md\n- progress.md\n- .byterules` 
+            text: `✅ Memory Bank successfully created!\n\nLocation: ${MEMORY_BANK_DIR}\n\nGenerated Documents:\n- projectbrief.md\n- productContext.md\n- systemPatterns.md\n- techContext.md\n- activeContext.md\n- progress.md\n\nOrchestration Guide: ${copilotInstructionsDest}` 
           }
         ]
       };

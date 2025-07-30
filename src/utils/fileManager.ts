@@ -39,9 +39,9 @@ This directory serves as a structured repository for your project information an
 - **progress.md**: Progress tracking, milestones, and project history
 
 ## Document Management
-This Memory Bank uses a structured approach to organize project knowledge. Each document serves a specific purpose in the project lifecycle and should be maintained according to the rules specified in the \`copilot-instructions.md\` file.
+This Memory Bank uses a structured approach to organize project knowledge. Each document serves a specific purpose in the project lifecycle and should be maintained according to the rules specified in the \`.github/copilot-instructions.md\` file.
 
-See the \`copilot-instructions.md\` file for detailed guidelines on how to maintain and update these documents.
+See the \`.github/copilot-instructions.md\` file for detailed guidelines on how to maintain and update these documents.
 `;
     try {
       await fs.writeFile(readmePath, readmeContent, 'utf-8');
@@ -189,32 +189,44 @@ export async function exportMemoryBank(sourceDir: string, format: string = 'fold
 }
 
 /**
- * Reads the copilot-instructions.md file and returns its content
- * @param directory Directory where copilot-instructions.md file is located
- * @returns Content of copilot-instructions.md file
+ * Reads the .github/copilot-instructions.md file from the workspace root and returns its content
+ * @param directory Directory where memory bank is located (searches for workspace root)
+ * @returns Content of .github/copilot-instructions.md file
  */
 export async function readByteRules(directory: string): Promise<string> {
   try {
-    const byteRulesPath = path.join(directory, 'copilot-instructions.md');
+    // Find workspace root by looking for .github directory
+    let workspaceRoot = directory;
+    
+    // Try to find workspace root by going up directories until we find .github
+    while (workspaceRoot !== path.parse(workspaceRoot).root) {
+      const githubDir = path.join(workspaceRoot, '.github');
+      if (await fs.pathExists(githubDir)) {
+        break;
+      }
+      workspaceRoot = path.dirname(workspaceRoot);
+    }
+    
+    const copilotInstructionsPath = path.join(workspaceRoot, '.github', 'copilot-instructions.md');
     
     // Check if file exists
-    if (!await fs.pathExists(byteRulesPath)) {
-      throw new Error('ByteRules file not found. Memory Bank may not be properly initialized.');
+    if (!await fs.pathExists(copilotInstructionsPath)) {
+      throw new Error('Copilot instructions file not found. Memory Bank may not be properly initialized or .github/copilot-instructions.md is missing.');
     }
     
     // Read file
-    const content = await fs.readFile(byteRulesPath, 'utf-8');
+    const content = await fs.readFile(copilotInstructionsPath, 'utf-8');
     
     return content;
   } catch (error) {
-    console.error('Error reading ByteRules:', error);
-    throw new Error(`Failed to read ByteRules: ${error}`);
+    console.error('Error reading Copilot Instructions:', error);
+    throw new Error(`Failed to read Copilot Instructions: ${error}`);
   }
 }
 
 /**
  * Gets document workflow information based on document type
- * @param directory Directory where copilot-instructions.md file is located
+ * @param directory Directory where memory bank is located (searches for workspace root)
  * @param documentType Type of document to get workflow for
  * @returns Workflow information for the document
  */
@@ -292,8 +304,8 @@ export async function getDocumentWorkflow(directory: string, documentType: strin
 }
 
 /**
- * Creates a structured template for a document based on ByteRules
- * @param directory Directory where copilot-instructions.md file is located
+ * Creates a structured template for a document based on Copilot Instructions
+ * @param directory Directory where memory bank is located (searches for workspace root)
  * @param documentType Type of document to create template for
  * @returns Structured template content
  */
