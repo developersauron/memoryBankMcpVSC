@@ -94,24 +94,24 @@ server.tool(
         console.log(`No location specified, using current directory as base: ${baseDir}`);
       }
       
-      // Create memory-bank directory inside the base directory
-      memoryBankDir = path.join(baseDir, 'memory-bank');
+      // Create memory-bank directory inside .github folder
+      const githubBaseDir = path.join(baseDir, '.github');
+      memoryBankDir = path.join(githubBaseDir, 'memory-bank');
       console.log(`Will create Memory Bank structure at: ${memoryBankDir}`);
-      
-      // Ensure parent directory exists if needed
-      const parentDir = path.dirname(memoryBankDir);
-      try {
-        await fs.ensureDir(parentDir);
-        console.log(`Ensured parent directory exists: ${parentDir}`);
-      } catch (error) {
-        console.error(`Error ensuring parent directory: ${error}`);
-        throw new Error(`Cannot create or access parent directory: ${error}`);
-      }
       
       // Set global memory bank directory
       MEMORY_BANK_DIR = memoryBankDir;
       
       console.log(`Will create Memory Bank at: ${MEMORY_BANK_DIR}`);
+      
+      // Ensure .github directory exists first
+      try {
+        await fs.ensureDir(githubBaseDir);
+        console.log(`Ensured .github directory exists: ${githubBaseDir}`);
+      } catch (error) {
+        console.error(`Error ensuring .github directory: ${error}`);
+        throw new Error(`Cannot create or access .github directory: ${error}`);
+      }
       
       // Ensure memory-bank directory exists before passing to createMemoryBankStructure
       try {
@@ -298,7 +298,7 @@ Each document follows a standard lifecycle:
         content: [
           { 
             type: 'text', 
-            text: `✅ Memory Bank successfully created!\n\nLocation: ${MEMORY_BANK_DIR}\n\nGenerated Documents:\n- projectbrief.md\n- productContext.md\n- systemPatterns.md\n- techContext.md\n- activeContext.md\n- progress.md\n\nOrchestration Guide: ${copilotInstructionsDest}` 
+            text: `✅ Memory Bank successfully created!\n\nLocation: ${MEMORY_BANK_DIR}\n\nGenerated Documents:\n- projectbrief.md\n- productContext.md\n- systemPatterns.md\n- techContext.md\n- activeContext.md\n- progress.md\n\nOrchestration Guide: ${copilotInstructionsDest}\n\n📁 Memory Bank is now organized under .github/memory-bank/` 
           }
         ]
       };
