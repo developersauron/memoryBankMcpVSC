@@ -4,36 +4,45 @@ npm-debug.log
 yarn-debug.log
 yarn-error.log
 
-# Derleme ve dağıtım
+# Build and distribution
 dist/
 build/
 *.tsbuildinfo
 
-# Çevre değişkenleri
+# Environment variables
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# Memory Bank verileri
+# Memory Bank data
 memory-bank/
 memory-bank-export/
 memory-bank-export.json
 
-# Editör ve IDE
-.vscode/
+# Editor and IDE
+# Keep .vscode/ for VS Code optimization but ignore sensitive files
+.vscode/settings.json.user
 .idea/
 *.swp
 *.swo
 
-# İşletim sistemi
+# VS Code temporary files
+.history/
+.vscode/launch.json.backup
+.vscode/tasks.json.backup
+
+# Operating system
 .DS_Store
 Thumbs.db
 
-# Log dosyaları
+# Log files
 logs/
 *.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log* 
+yarn-error.log*
+
+# VS Code extensions and workspace
+.vscode/extensions.json.backup 

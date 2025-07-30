@@ -1,16 +1,23 @@
-# Memory Bank MCP
+# Memory Bank MCP - VS Code Edition
 
 <div align="center">
-  <img src="https://github.com/tuncer-byte/byte/blob/main/media/icons/icon-white.png" height="128">
-  <h1>Memory Bank MCP</h1>
+  <img src="https://github.com/developersauron/memoryBankMcpVSC/blob/main/assets/icon.png" height="128" alt="Memory Bank MCP VS Code">
+  <h1>Memory Bank MCP - VS Code Edition</h1>
   <p>
-    <b>Structured project knowledge management for LLMs via Model Context Protocol (MCP)</b>
+    <b>VS Code optimized structured project knowledge management for LLMs via Model Context Protocol (MCP)</b>
   </p>
 </div>
 
-<a href="https://glama.ai/mcp/servers/@tuncer-byte/memory-bank-MCP">
-  <img width="380" height="200" src="https://glama.ai/mcp/servers/@tuncer-byte/memory-bank-MCP/badge" alt="Memory Bank MCP server" />
+<a href="https://glama.ai/mcp/servers/@developersauron/memoryBankMcpVSC">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/@developersauron/memoryBankMcpVSC/badge" alt="Memory Bank MCP VS Code server" />
 </a>
+
+---
+
+![VS Code](https://img.shields.io/badge/VS%20Code-Optimized-blue?logo=visualstudiocode)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.3+-blue?logo=typescript)
+![GitHub Copilot](https://img.shields.io/badge/GitHub%20Copilot-Ready-green?logo=github)
+![MCP](https://img.shields.io/badge/MCP-Compatible-orange)
 
 ---
 
@@ -28,9 +35,18 @@ MCP is an open protocol that standardizes how applications provide context to LL
 
 Learn more: [MCP Introduction](https://modelcontextprotocol.io/introduction)
 
-## About Memory Bank MCP
+## About Memory Bank MCP - VS Code Edition
 
-Memory Bank MCP is an **MCP server** that helps teams create, manage, and access structured project documentation. It generates and maintains interconnected Markdown documents capturing all aspects of project knowledge, from high-level goals to technical details and daily progress. It is designed to be accessed by MCP-compatible clients and LLM agents.
+Memory Bank MCP - VS Code Edition is an **MCP server** specifically optimized for Visual Studio Code development workflows. It helps teams create, manage, and access structured project documentation with seamless VS Code integration. The server generates and maintains interconnected Markdown documents capturing all aspects of project knowledge, from high-level goals to technical details and daily progress.
+
+### VS Code Specific Features
+
+- **Native VS Code Integration**: Optimized for VS Code development environment
+- **TypeScript Debugging**: Full breakpoint support with source maps
+- **Integrated Terminal Support**: Run MCP server directly in VS Code terminal
+- **GitHub Copilot Integration**: Enhanced AI-assisted development
+- **Task Runner Integration**: Pre-configured VS Code tasks for common operations
+- **IntelliSense Support**: Auto-completion for MCP tool schemas
 
 ## Features
 
@@ -46,8 +62,8 @@ Memory Bank MCP is an **MCP server** that helps teams create, manage, and access
 
 ```bash
 # Clone the repository
-git clone https://github.com/tuncer-byte/memory-bank-mcp.git
-cd memory-bank-mcp
+git clone https://github.com/developersauron/memoryBankMcpVSC.git
+cd memoryBankMcpVSC
 
 # Install dependencies
 npm install
@@ -65,23 +81,31 @@ echo "GEMINI_API_KEY=your_api_key_here" > .env
 For VS Code development, use the integrated tools:
 
 ```bash
-# Open in VS Code
+# Open in VS Code with workspace file
+code memoryBankMcpVSC.code-workspace
+
+# Or open directory directly
 code .
 
 # Use VS Code tasks (Ctrl+Shift+P → "Tasks: Run Task")
 # - build: Compile TypeScript
 # - dev: Development mode with ts-node
 # - start: Build and run MCP server
+# - type-check: TypeScript validation
+# - clean: Clean build artifacts
 
 # Or use terminal
 npm run dev
 ```
 
 **VS Code Features:**
-- TypeScript debugging with breakpoints (F5)
-- Integrated terminal for MCP server
-- GitHub Copilot Chat for MCP tool development
-- Auto-import and IntelliSense for MCP schemas
+- **Workspace Configuration**: Pre-configured settings, tasks, and launch configs
+- **TypeScript Debugging**: Full breakpoint support with F5
+- **Integrated Terminal**: Run MCP server directly in VS Code
+- **GitHub Copilot Integration**: AI-assisted development with chat
+- **Auto-import and IntelliSense**: Smart code completion for MCP schemas
+- **Task Runner**: Build, dev, and debug tasks integrated
+- **Extension Recommendations**: Curated list of helpful VS Code extensions
 
 ### Development Mode
 
@@ -102,9 +126,9 @@ To connect Memory Bank MCP to your MCP client, add the following to your `mcp.js
 
 ```json
 {
-  "memoryBank": {
+  "memoryBankVSC": {
     "command": "node",
-    "args": ["/path/to/memory-bank-mcp/dist/index.js"],
+    "args": ["/path/to/memoryBankMcpVSC/dist/index.js"],
     "env": {
       "GEMINI_API_KEY": "your_gemini_api_key_here"
     }
@@ -112,7 +136,7 @@ To connect Memory Bank MCP to your MCP client, add the following to your `mcp.js
 }
 ```
 
-Replace `/path/to/memory-bank-mcp/dist/index.js` with the absolute path to your built file, and add your Gemini API key if needed.
+Replace `/path/to/memoryBankMcpVSC/dist/index.js` with the absolute path to your built file, and add your Gemini API key if needed.
 
 ---
 
@@ -173,6 +197,25 @@ await callTool({
   name: "query_memory_bank",
   arguments: {
     query: "system architecture components"
+  }
+});
+```
+
+### `create_vscode_instructions`
+
+Creates VS Code specific development guidelines and GitHub Copilot instructions.
+
+**Parameters:**
+- `projectPurpose` (string): Detailed project purpose description (min 10 characters)
+- `location` (string): Absolute path where .github/copilot-instructions.md will be created
+
+**Example:**
+```javascript
+await callTool({
+  name: "create_vscode_instructions",
+  arguments: {
+    projectPurpose: "Building a VS Code optimized AI-powered development assistant",
+    location: "/Users/username/Documents/projects/ai-assistant"
   }
 });
 ```

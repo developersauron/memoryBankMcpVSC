@@ -1,0 +1,91 @@
+{
+  "folders": [
+    {
+      "name": "Memory Bank MCP - VS Code Edition",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "typescript.preferences.includePackageJsonAutoImports": "on",
+    "typescript.suggest.autoImports": true,
+    "typescript.suggest.completeFunctionCalls": true,
+    "typescript.inlayHints.enumMemberValues.enabled": true,
+    "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+    "typescript.inlayHints.parameterNames.enabled": "all",
+    "editor.formatOnSave": true,
+    "editor.codeActionsOnSave": {
+      "source.organizeImports": "explicit"
+    },
+    "github.copilot.enable": {
+      "*": true,
+      "markdown": true,
+      "typescript": true
+    },
+    "files.associations": {
+      "*.md": "markdown",
+      ".byterules": "markdown",
+      "copilot-instructions.md": "markdown"
+    }
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-vscode.vscode-typescript-next",
+      "usernamehw.errorlens",
+      "eamodio.gitlens",
+      "yzhang.markdown-all-in-one",
+      "rangav.vscode-thunder-client",
+      "github.copilot",
+      "github.copilot-chat",
+      "ms-vscode.vscode-json"
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "Build MCP Server",
+        "type": "npm",
+        "script": "build",
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        },
+        "problemMatcher": ["$tsc"]
+      },
+      {
+        "label": "Start Development Server",
+        "type": "npm",
+        "script": "dev",
+        "group": "build",
+        "presentation": {
+          "echo": true,
+          "reveal": "always",
+          "focus": false,
+          "panel": "shared"
+        },
+        "isBackground": true
+      }
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "Debug MCP Server",
+        "type": "node",
+        "request": "launch",
+        "program": "${workspaceFolder}/src/index.ts",
+        "runtimeArgs": ["--loader", "ts-node/esm"],
+        "env": {
+          "NODE_OPTIONS": "--loader ts-node/esm",
+          "VSCODE_WORKSPACE_FOLDER": "${workspaceFolder}"
+        },
+        "console": "integratedTerminal",
+        "skipFiles": ["<node_internals>/**"]
+      }
+    ]
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug MCP Server (TypeScript)",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/index.ts",
+      "outFiles": [
+        "${workspaceFolder}/dist/**/*.js"
+      ],
+      "runtimeArgs": [
+        "--loader",
+        "ts-node/esm"
+      ],
+      "env": {
+        "NODE_OPTIONS": "--loader ts-node/esm",
+        "GEMINI_API_KEY": "${env:GEMINI_API_KEY}",
+        "VSCODE_WORKSPACE_FOLDER": "${workspaceFolder}"
+      },
+      "console": "integratedTerminal",
+      "skipFiles": [
+        "<node_internals>/**"
+      ],
+      "resolveSourceMapLocations": [
+        "${workspaceFolder}/**",
+        "!**/node_modules/**"
+      ],
+      "sourceMaps": true,
+      "smartStep": true
+    },
+    {
+      "name": "Debug Built MCP Server",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/dist/index.js",
+      "env": {
+        "GEMINI_API_KEY": "${env:GEMINI_API_KEY}",
+        "VSCODE_WORKSPACE_FOLDER": "${workspaceFolder}"
+      },
+      "console": "integratedTerminal",
+      "preLaunchTask": "build",
+      "skipFiles": [
+        "<node_internals>/**"
+      ]
+    },
+    {
+      "name": "Debug with Inspect",
+      "type": "node",
+      "request": "launch",
+      "program": "${workspaceFolder}/src/index.ts",
+      "runtimeArgs": [
+        "--inspect",
+        "--loader",
+        "ts-node/esm"
+      ],
+      "env": {
+        "NODE_OPTIONS": "--loader ts-node/esm",
+        "GEMINI_API_KEY": "${env:GEMINI_API_KEY}",
+        "VSCODE_WORKSPACE_FOLDER": "${workspaceFolder}"
+      },
+      "console": "integratedTerminal"
+    }
+  ]
+}

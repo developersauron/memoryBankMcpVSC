@@ -210,3 +210,7 @@ For production testing, use external MCP clients:
 - `src/utils/fileManager.ts`: Document management and .byterules parsing
 - `src/templates/.byterules`: Document structure and workflow rules
 - `package.json`: ESM configuration and MCP-specific dependencies
+
+---
+*Memory Bank MCP - VS Code Edition*
+*GitHub: https://github.com/developersauron/memoryBankMcpVSC*

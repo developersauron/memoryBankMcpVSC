@@ -1,7 +1,7 @@
 {
-  "name": "memory-bank-mcp",
+  "name": "memory-bank-mcp-vscode",
   "version": "1.0.0",
-  "description": "MCP-based Memory Bank: Structured project knowledge management for LLMs",
+  "description": "MCP-based Memory Bank: VS Code optimized structured project knowledge management for LLMs",
   "main": "dist/index.js",
   "type": "module",
   "scripts": {
@@ -28,7 +28,15 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.3.3"
   },
-  "keywords": ["mcp", "memory-bank", "gemini", "ai"],
-  "author": "",
-  "license": "MIT"
+  "keywords": ["mcp", "memory-bank", "gemini", "ai", "vscode", "github-copilot", "typescript", "development-tools"],
+  "author": "developersauron",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/developersauron/memoryBankMcpVSC.git"
+  },
+  "bugs": {
+    "url": "https://github.com/developersauron/memoryBankMcpVSC/issues"
+  },
+  "homepage": "https://github.com/developersauron/memoryBankMcpVSC#readme"
 } 

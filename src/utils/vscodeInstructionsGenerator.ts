@@ -224,7 +224,8 @@ ${aiGeneratedContent}
 
 ---
 *Generated with AI assistance for VS Code development*
-*Memory Bank MCP - @tuncer-byte*`;
+*Memory Bank MCP - VS Code Edition*
+*GitHub: https://github.com/developersauron/memoryBankMcpVSC*`;
   } catch (error) {
     console.error("Error generating VS Code instructions with AI:", error);
 

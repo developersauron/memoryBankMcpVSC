@@ -1,0 +1,45 @@
+{
+  "typescript.preferences.useAliasesForRenames": false,
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "typescript.suggest.autoImports": true,
+  "typescript.suggest.completeFunctionCalls": true,
+  "typescript.inlayHints.enumMemberValues.enabled": true,
+  "typescript.inlayHints.functionLikeReturnTypes.enabled": true,
+  "typescript.inlayHints.parameterNames.enabled": "all",
+  "files.associations": {
+    "*.md": "markdown",
+    ".byterules": "markdown",
+    "copilot-instructions.md": "markdown"
+  },
+  "editor.rulers": [80, 120],
+  "editor.tabSize": 2,
+  "editor.insertSpaces": true,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "markdown.extension.toc.levels": "2..6",
+  "markdown.extension.preview.autoShowPreviewToSide": true,
+  "npm.enableRunFromFolder": true,
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/dist": true,
+    "**/.git": true,
+    "**/memory-bank": true,
+    "**/memory-bank-export": true
+  },
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/dist": true
+  },
+  "git.ignoreLimitWarning": true,
+  "github.copilot.enable": {
+    "*": true,
+    "markdown": true,
+    "typescript": true
+  },
+  "github.copilot.editor.enableAutoCompletions": true,
+  "terminal.integrated.defaultProfile.osx": "zsh",
+  "debug.console.fontSize": 14,
+  "debug.console.lineHeight": 18
+}

@@ -1,0 +1,18 @@
+{
+  "recommendations": [
+    "ms-vscode.vscode-typescript-next",
+    "usernamehw.errorlens",
+    "eamodio.gitlens",
+    "yzhang.markdown-all-in-one",
+    "rangav.vscode-thunder-client",
+    "github.copilot",
+    "github.copilot-chat",
+    "ms-vscode.vscode-json",
+    "bradlc.vscode-tailwindcss",
+    "formulahendry.auto-rename-tag",
+    "esbenp.prettier-vscode"
+  ],
+  "unwantedRecommendations": [
+    "ms-vscode.vscode-typescript"
+  ]
+}
