@@ -61,6 +61,7 @@ let MEMORY_BANK_DIR: string | null = null;
 // Initialize Memory Bank - create new document structure
 server.tool(
   'initialize_memory_bank',
+  'Initializes a new Memory Bank document structure at the specified location.',
   {
     goal: z.string().min(10, 'Project goal must be at least 10 characters'),
     geminiApiKey: z.string().optional().describe('Gemini API key (optional)'),
@@ -308,6 +309,7 @@ Each document follows a standard lifecycle:
 // Update document
 server.tool(
   'update_document',
+  'Updates or regenerates a Memory Bank document (e.g., projectbrief.md, productContext.md, etc.).',
   {
     documentType: z.enum(['projectbrief', 'productContext', 'systemPatterns', 'techContext', 'activeContext', 'progress']),
     content: z.string().optional(),
@@ -371,6 +373,7 @@ server.tool(
 // Query Memory Bank
 server.tool(
   'query_memory_bank',
+  'Performs a search query across all Memory Bank documents.',
   {
     query: z.string().min(5, 'Query must be at least 5 characters')
   },
@@ -560,6 +563,7 @@ function extractRelevantSnippet(text: string, queryTerms: string[], sectionTitle
 // Export Memory Bank
 server.tool(
   'export_memory_bank',
+  'Exports the entire Memory Bank as a JSON file or folder.',
   {
     format: z.enum(['json', 'folder']).default('folder').describe('Export format'),
     outputPath: z.string().optional()
