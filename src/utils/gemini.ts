@@ -3,6 +3,12 @@ import dotenv from 'dotenv';
 import fs from 'fs-extra';
 import path from 'path';
 
+// Debug logging function - only logs in debug mode
+function debugLog(...args: any[]) {
+  if (process.env.MCP_DEBUG === 'true') {
+    console.error('[DEBUG]', ...args);
+  }
+}
 
 // Load environment variables
 dotenv.config();
@@ -13,7 +19,7 @@ const DEFAULT_API_KEY = 'YOUR_DEFAULT_API_KEY';
 // Initialize API key
 let apiKey = process.env.GEMINI_API_KEY;
 
-console.log('Checking for Gemini API key...');
+debugLog('Checking for Gemini API key...');
 if (!apiKey) {
   console.error('GEMINI_API_KEY environment variable is not defined.');
   
@@ -21,14 +27,14 @@ if (!apiKey) {
     const envPath = path.resolve(process.cwd(), '.env');
     if (!fs.existsSync(envPath)) {
       fs.writeFileSync(envPath, `GEMINI_API_KEY=${DEFAULT_API_KEY}`, 'utf-8');
-      console.log('Created .env file with default API key.');
+      debugLog('Created .env file with default API key.');
     }
   } catch (err) {
     console.error('Failed to create .env file:', err);
   }
   
   apiKey = DEFAULT_API_KEY;
-  console.log('Using default API key.');
+  debugLog('Using default API key.');
 }
 
 if (apiKey === 'your_gemini_api_key_here' || apiKey === 'YOUR_DEFAULT_API_KEY') {
@@ -36,13 +42,13 @@ if (apiKey === 'your_gemini_api_key_here' || apiKey === 'YOUR_DEFAULT_API_KEY') 
   throw new Error('Invalid API key. Please set a valid GEMINI_API_KEY in your .env file.');
 }
 
-console.log('Gemini API key found.');
+debugLog('Gemini API key found.');
 
 // Initialize Gemini client
 let genAI: GoogleGenerativeAI;
 try {
   genAI = new GoogleGenerativeAI(apiKey);
-  console.log('Gemini client created successfully.');
+  debugLog('Gemini client created successfully.');
 } catch (error) {
   console.error('Failed to create Gemini client:', error);
   throw new Error(`Gemini client creation failed: ${error}`);
@@ -177,7 +183,7 @@ Create the following documents for this project:
   const results: Record<string, string> = {};
 
   for (const [docType, docPrompt] of Object.entries(documentTypes)) {
-    console.log(`Creating ${docType} document...`);
+    debugLog(`Creating ${docType} document...`);
     
     const fullPrompt = `${basePrompt}${docPrompt}\n\nPlease create content only for the "${docType}" document. Use Markdown format with section headers marked by ##. At the end of the document, add the note "Created on ${currentDate}".`;
     
