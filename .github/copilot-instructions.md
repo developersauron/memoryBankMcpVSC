@@ -1,216 +1,131 @@
-# Memory Bank MCP Development Guide
+# Memory Bank Document Orchestration Rules
 
-## Architecture Overview
+## Document Types and Purposes
 
-This is a **Model Context Protocol (MCP) server**, not a traditional web application. The entire architecture revolves around exposing tools and resources to LLM clients through the MCP protocol.
+### 1. Project Brief (projectbrief.md)
+- **Purpose**: Acts as the project's foundation document defining key objectives
+- **When to Update**: At project initiation and when scope changes
+- **Structure**:
+  - Project Vision & Goals
+  - Key Stakeholders
+  - Success Metrics
+  - Constraints & Limitations
+  - Timeline Overview
+- **Commands**:
+  - `update_document projectbrief` - Update project brief details
+  - `query_memory_bank "project goals"` - Find project goal information
 
-### Core Components
+### 2. Product Context (productContext.md)
+- **Purpose**: Details product functionality, user experience, and market position
+- **When to Update**: When features change or market requirements shift
+- **Structure**:
+  - User Personas
+  - Feature List & Priorities
+  - User Stories
+  - Competitive Analysis
+  - Product Roadmap
+- **Commands**:
+  - `update_document productContext` - Update product information
+  - `query_memory_bank "features"` - Find feature-related information
 
-- **MCP Server** (`src/mcp/memoryBankMcp.ts`): Main server that exposes 5 tools via MCP protocol
-- **Document Management** (`src/utils/fileManager.ts`): Handles Memory Bank filesystem operations
-- **AI Integration** (`src/utils/gemini.ts`): Gemini API integration for content generation
-- **Template System** (`src/templates/`): Markdown templates for structured documents
+### 3. System Patterns (systemPatterns.md)
+- **Purpose**: Documents system architecture and design decisions
+- **When to Update**: When architectural decisions are made or changed
+- **Structure**:
+  - System Architecture
+  - Component Diagrams
+  - Design Patterns Used
+  - Integration Points
+  - Data Flow
+- **Commands**:
+  - `update_document systemPatterns` - Update system architecture information
+  - `query_memory_bank "architecture"` - Find architecture information
 
-### VS Code Integration
+### 4. Tech Context (techContext.md)
+- **Purpose**: Technical details, stack choices, and tooling decisions
+- **When to Update**: When technology decisions are made or changed
+- **Structure**:
+  - Technology Stack
+  - Development Environment
+  - Deployment Process
+  - Performance Considerations
+  - Technical Debt
+- **Commands**:
+  - `update_document techContext` - Update technology information
+  - `query_memory_bank "stack"` - Find technology stack information
 
-This project is optimized for VS Code development with:
-- TypeScript IntelliSense for MCP tool definitions
-- Integrated terminal for running MCP server
-- Built-in Git integration for document versioning
-- Extension support for enhanced Markdown editing
+### 5. Active Context (activeContext.md)
+- **Purpose**: Current tasks, open questions, and active development
+- **When to Update**: Daily or when switching focus areas
+- **Structure**:
+  - Current Sprint Goals
+  - Active Tasks
+  - Blockers & Challenges
+  - Decisions Needed
+  - Next Actions
+- **Commands**:
+  - `update_document activeContext` - Update current work information
+  - `query_memory_bank "current tasks"` - Find information about active work
 
-### Document Architecture
+### 6. Progress (progress.md)
+- **Purpose**: Progress tracking and milestone documentation
+- **When to Update**: After completing tasks or reaching milestones
+- **Structure**:
+  - Milestones Achieved
+  - Current Progress Status
+  - Sprint/Cycle History
+  - Learnings & Adjustments
+  - Next Milestones
+- **Commands**:
+  - `update_document progress` - Update project progress information
+  - `query_memory_bank "milestone"` - Find milestone information
 
-Memory Bank uses a **6-document system** with strict hierarchical relationships:
+## Document Workflow Processes
 
-1. `projectbrief.md` → Foundation document
-2. `productContext.md` → User-focused requirements
-3. `systemPatterns.md` → Architecture decisions
-4. `techContext.md` → Technology implementation
-5. `activeContext.md` → Current work tracking
-6. `progress.md` → Historical record
+### Project Initialization
+1. Create project brief with clear goals
+2. Define product context based on brief
+3. Establish initial system patterns
+4. Document technology decisions
+5. Set up initial active context and progress tracking
 
-Each document follows patterns defined in `.byterules` template.
+### Feature Development Cycle
+1. Update active context with new feature details
+2. Reference system patterns for implementation guidance
+3. Document technical decisions in tech context
+4. Update progress when feature is completed
+5. Ensure product context reflects new capabilities
 
-## Development Patterns
+### Project Review Process
+1. Review progress against project brief goals
+2. Validate system patterns match implementation
+3. Update product context with feedback/learnings
+4. Document technical challenges in tech context
+5. Set new goals in active context
 
-### MCP Tool Implementation
+## Best Practices
 
-All tools follow this pattern in `memoryBankMcp.ts`:
+### Document Maintenance
+- Keep documents concise and focused
+- Use markdown formatting for readability
+- Include diagrams where appropriate (store in resources/)
+- Link between documents when referencing related content
+- Update documents regularly based on the workflow process
 
-```typescript
-server.tool(
-  "tool_name",
-  {
-    parameter: z.string().describe("description"),
-  },
-  async ({ parameter }) => {
-    try {
-      // Tool logic here
-      return { content: [{ type: "text", text: "success message" }] };
-    } catch (error) {
-      return {
-        content: [{ type: "text", text: `❌ Error: ${error.message}` }],
-        isError: true,
-      };
-    }
-  }
-);
-```
+### Collaboration Guidelines
+- Review document changes with team members
+- Hold regular sync meetings to update active context
+- Use version control for tracking document history
+- Maintain changelog entries in progress.md
+- Cross-reference documents to maintain consistency
 
-### File Path Management
+## Command Reference
+- `initialize_memory_bank` - Create a new Memory Bank structure
+- `update_document <docType>` - Update specific document content
+- `query_memory_bank <query>` - Search across all documents
+- `export_memory_bank` - Export current Memory Bank state
 
-**Critical**: Always use absolute paths. The server manages a global `MEMORY_BANK_DIR` variable:
+## Document Integration Flow
+Project Brief → Product Context → System Patterns → Tech Context → Active Context → Progress
 
-- Set during `initialize_memory_bank` tool execution
-- Used by all subsequent operations
-- Must be validated before any file operations
-
-### Error Handling Strategy
-
-1. **Tool Level**: Return structured error responses with `isError: true`
-2. **Utility Level**: Throw detailed errors that tools can catch and format
-3. **User Messages**: Always use English for consistency (note: some legacy Turkish exists)
-
-### AI Content Generation
-
-Uses Gemini API through `generateContent()` function:
-
-- Always handle API key validation
-- Implement fallbacks for missing dependencies
-- Use structured prompts for consistent output
-
-## Key Workflows
-
-### Project Setup
-
-```bash
-npm install
-npm run build
-npm run start  # Starts MCP server on stdio
-```
-
-### Adding New MCP Tools
-
-1. Add tool definition in `memoryBankMcp.ts`
-2. Use Zod for parameter validation
-3. Implement error handling pattern
-4. Test with VS Code's integrated terminal or GitHub Copilot Chat
-5. Use VS Code's TypeScript IntelliSense to verify tool schemas
-
-### VS Code Development Workflow
-
-1. Open project in VS Code with TypeScript extension
-2. Use `Ctrl+Shift+P` → "TypeScript: Restart TS Server" after schema changes
-3. Leverage VS Code's integrated terminal for npm commands
-4. Use GitHub Copilot Chat to generate tool documentation
-5. Utilize VS Code's built-in Git integration for version control
-
-### Document Template Updates
-
-1. Modify templates in `src/templates/`
-2. Update `.byterules` if structure changes
-3. Regenerate documents using `update_document` tool with `regenerate: true`
-
-### VS Code Tasks and Debugging
-
-Use VS Code's built-in task system:
-- `Ctrl+Shift+P` → "Tasks: Run Task" → Select from available tasks
-- **build**: Compile TypeScript to dist/
-- **dev**: Run in development mode with ts-node
-- **start**: Build and run the MCP server
-- **F5**: Start debugging with breakpoints
-
-## Integration Points
-
-### External Dependencies
-
-- **@modelcontextprotocol/sdk**: Core MCP server functionality
-- **@google/generative-ai**: AI content generation
-- **fs-extra**: Enhanced file system operations
-- **zod**: Runtime type validation
-
-### Environment Variables
-
-- `GEMINI_API_KEY`: Required for AI features
-- `VSCODE_WORKSPACE_FOLDER`: Auto-detected workspace path
-
-### File System Layout
-
-```
-memory-bank/           # Created by initialize_memory_bank
-├── copilot-instructions.md   # Document orchestration instructions.md
-├── projectbrief.md   # Foundation document
-├── productContext.md
-├── systemPatterns.md
-├── techContext.md
-├── activeContext.md
-└── progress.md
-```
-
-## Testing & Debugging
-
-### VS Code Development Testing
-
-Use VS Code's integrated tools for development:
-
-1. **Integrated Terminal**: Run `npm run dev` directly in VS Code
-2. **TypeScript Debugging**: Set breakpoints in `.ts` files
-3. **GitHub Copilot Chat**: Ask questions about MCP tool implementation
-4. **Output Panel**: Monitor console.log statements from MCP server
-5. **Problems Panel**: View TypeScript compilation errors
-
-### MCP Client Testing
-
-For production testing, use external MCP clients:
-
-1. Configure `mcp.json` with server path
-2. Test each tool individually
-3. Verify document generation and updates
-
-### Common Issues
-
-- **"Memory Bank not initialized"**: Run `initialize_memory_bank` first
-- **Path errors**: Ensure all paths are absolute
-- **API errors**: Verify `GEMINI_API_KEY` is set correctly
-
-### Development Commands
-
-- `npm run dev`: Development mode with ts-node
-- `npm run build`: Compile TypeScript to dist/
-- `npm run start`: Run compiled server
-
-### VS Code Specific Commands
-
-- `Ctrl+Shift+P` → "TypeScript: Restart TS Server": Refresh IntelliSense
-- `Ctrl+`` `: Open integrated terminal
-- `Ctrl+Shift+E`: Open Explorer panel
-- `Ctrl+Shift+G`: Open Source Control panel
-- `F5`: Start debugging (if launch.json configured)
-
-## Code Style Notes
-
-- Use ESM imports (`import`/`export`) throughout
-- Prefer async/await over promises
-- Always validate inputs with Zod schemas
-- Include detailed console.log statements for debugging MCP interactions
-- Use English for all user-facing messages and comments
-
-### VS Code Extensions for Enhanced Development
-
-- **TypeScript Importer**: Auto-import management
-- **Error Lens**: Inline error display
-- **GitLens**: Enhanced Git capabilities
-- **Markdown All in One**: Better markdown editing
-- **Thunder Client**: API testing within VS Code
-
-## Critical Files to Understand
-
-- `src/mcp/memoryBankMcp.ts`: Main MCP server logic and tool definitions
-- `src/utils/fileManager.ts`: Document management and .byterules parsing
-- `src/templates/.byterules`: Document structure and workflow rules
-- `package.json`: ESM configuration and MCP-specific dependencies
-
----
-*Memory Bank MCP - VS Code Edition*
-*GitHub: https://github.com/developersauron/memoryBankMcpVSC*
+Follow this integration flow to ensure proper document orchestration and maintain project coherence.

@@ -23,12 +23,19 @@ const server = new McpServer({
 import { dirname } from 'path';
 import { fileURLToPath } from 'url';
 
+// Debug logging function - only logs in debug mode
+function debugLog(...args: any[]) {
+  if (process.env.MCP_DEBUG === 'true') {
+    console.error('[DEBUG]', ...args);
+  }
+}
+
 // Helper function to get the workspace root directory
 const getWorkspaceRootDir = () => {
   // Try to get VS Code workspace folder from environment variables
   // This is more reliable than process.cwd() in VS Code environment
   if (process.env.VSCODE_WORKSPACE_FOLDER) {
-    console.log(`Using VS Code workspace folder: ${process.env.VSCODE_WORKSPACE_FOLDER}`);
+    debugLog(`Using VS Code workspace folder: ${process.env.VSCODE_WORKSPACE_FOLDER}`);
     return process.env.VSCODE_WORKSPACE_FOLDER;
   }
   
@@ -38,20 +45,20 @@ const getWorkspaceRootDir = () => {
   const __dirname = dirname(__filename);
   
   const currentFilePath = __dirname;
-  console.log(`Current file directory: ${currentFilePath}`);
+  debugLog(`Current file directory: ${currentFilePath}`);
   
   // Try to find the workspace root by looking for package.json
   let dir = currentFilePath;
   while (dir !== path.parse(dir).root) {
     if (fs.existsSync(path.join(dir, 'package.json'))) {
-      console.log(`Found workspace root at: ${dir}`);
+      debugLog(`Found workspace root at: ${dir}`);
       return dir;
     }
     dir = path.dirname(dir);
   }
   
   // Fallback to current working directory with warning
-  console.warn(`Could not determine workspace root, falling back to CWD: ${process.cwd()}`);
+  debugLog(`Could not determine workspace root, falling back to CWD: ${process.cwd()}`);
   return process.cwd();
 };
 
@@ -69,10 +76,10 @@ server.tool(
   },
   async ({ goal, geminiApiKey, location }) => {
     try {
-      // Diagnostics: Log environment info
-      console.log(`Current working directory: ${process.cwd()}`);
-      console.log(`Node version: ${process.version}`);
-      console.log(`Platform: ${process.platform}`);
+      // Diagnostics: Log environment info only in debug mode
+      debugLog(`Current working directory: ${process.cwd()}`);
+      debugLog(`Node version: ${process.version}`);
+      debugLog(`Platform: ${process.platform}`);
       
       // Determine where to create the memory-bank directory
       let baseDir;
@@ -87,27 +94,27 @@ server.tool(
           // If relative path is provided, resolve against current working directory
           baseDir = path.resolve(process.cwd(), location);
         }
-        console.log(`Using user specified base location: ${baseDir}`);
+        debugLog(`Using user specified base location: ${baseDir}`);
       } else {
         // If no location provided, use current working directory as base
         baseDir = process.cwd();
-        console.log(`No location specified, using current directory as base: ${baseDir}`);
+        debugLog(`No location specified, using current directory as base: ${baseDir}`);
       }
       
       // Create memory-bank directory inside .github folder
       const githubBaseDir = path.join(baseDir, '.github');
       memoryBankDir = path.join(githubBaseDir, 'memory-bank');
-      console.log(`Will create Memory Bank structure at: ${memoryBankDir}`);
+      debugLog(`Will create Memory Bank structure at: ${memoryBankDir}`);
       
       // Set global memory bank directory
       MEMORY_BANK_DIR = memoryBankDir;
       
-      console.log(`Will create Memory Bank at: ${MEMORY_BANK_DIR}`);
+      debugLog(`Will create Memory Bank at: ${MEMORY_BANK_DIR}`);
       
       // Ensure .github directory exists first
       try {
         await fs.ensureDir(githubBaseDir);
-        console.log(`Ensured .github directory exists: ${githubBaseDir}`);
+        debugLog(`Ensured .github directory exists: ${githubBaseDir}`);
       } catch (error) {
         console.error(`Error ensuring .github directory: ${error}`);
         throw new Error(`Cannot create or access .github directory: ${error}`);
@@ -116,7 +123,7 @@ server.tool(
       // Ensure memory-bank directory exists before passing to createMemoryBankStructure
       try {
         await fs.ensureDir(MEMORY_BANK_DIR);
-        console.log(`Created Memory Bank root directory: ${MEMORY_BANK_DIR}`);
+        debugLog(`Created Memory Bank root directory: ${MEMORY_BANK_DIR}`);
       } catch (error) {
         console.error(`Error creating Memory Bank directory: ${error}`);
         throw new Error(`Cannot create Memory Bank directory: ${error}`);
@@ -136,15 +143,15 @@ server.tool(
       try {
         // Ensure .github directory exists
         await fs.ensureDir(githubDir);
-        console.log(`Ensured .github directory exists: ${githubDir}`);
+        debugLog(`Ensured .github directory exists: ${githubDir}`);
         
         // Debug: List all search paths we're going to try for copilot-instructions template
-        console.log('Searching for copilot-instructions template file...');
+        debugLog('Searching for copilot-instructions template file...');
         
         // Get the ESM compatible dirname
         const __filename = fileURLToPath(import.meta.url);
         const __dirname = dirname(__filename);
-        console.log(`Current file directory: ${__dirname}`);
+        debugLog(`Current file directory: ${__dirname}`);
         
         // Try multiple possible locations for the copilot-instructions template
         const possiblePaths = [
@@ -257,24 +264,24 @@ Each document follows a standard lifecycle:
         let copilotInstructionsFound = false;
         
         for (const testPath of possiblePaths) {
-          console.log(`Checking path: ${testPath}`);
+          debugLog(`Checking path: ${testPath}`);
           
           if (await fs.pathExists(testPath)) {
-            console.log(`✓ Found copilot-instructions.md at: ${testPath}`);
+            debugLog(`✓ Found copilot-instructions.md at: ${testPath}`);
             await fs.copy(testPath, copilotInstructionsDest);
-            console.log(`Standard copilot-instructions.md file copied to: ${copilotInstructionsDest}`);
+            debugLog(`Standard copilot-instructions.md file copied to: ${copilotInstructionsDest}`);
             copilotInstructionsFound = true;
             break;
           } else {
-            console.log(`✗ Not found at: ${testPath}`);
+            debugLog(`✗ Not found at: ${testPath}`);
           }
         }
         
         // If no copilot-instructions template found, create one with the default content
         if (!copilotInstructionsFound) {
-          console.log('No copilot-instructions template found, creating default');
+          debugLog('No copilot-instructions template found, creating default');
           await fs.writeFile(copilotInstructionsDest, defaultCopilotInstructions, 'utf-8');
-          console.log(`Default copilot-instructions.md file created at: ${copilotInstructionsDest}`);
+          debugLog(`Default copilot-instructions.md file created at: ${copilotInstructionsDest}`);
         }
         
       } catch (error) {
@@ -288,10 +295,16 @@ Each document follows a standard lifecycle:
       // Generate document contents
       const documentContents = await generateAllDocuments(goal);
 
-      // Save each document
+      // Save each document with proper error handling
       for (const [docType, content] of Object.entries(documentContents)) {
-        const filePath = path.join(MEMORY_BANK_DIR, `${docType}.md`);
-        await saveDocument(content, filePath);
+        try {
+          const filePath = path.join(MEMORY_BANK_DIR, `${docType}.md`);
+          await saveDocument(content, filePath);
+          debugLog(`Document saved: ${filePath}`);
+        } catch (error) {
+          console.error(`Failed to save document ${docType}:`, error);
+          throw new Error(`Failed to save document ${docType}: ${error}`);
+        }
       }
 
       return {
@@ -594,7 +607,7 @@ server.tool(
       const defaultOutputPath = path.resolve(path.join(process.cwd(), 'memory-bank-export'));
       const targetOutputPath = outputPath ? path.resolve(outputPath) : defaultOutputPath;
       
-      console.log(`Exporting Memory Bank from ${MEMORY_BANK_DIR} to ${targetOutputPath}`);
+      debugLog(`Exporting Memory Bank from ${MEMORY_BANK_DIR} to ${targetOutputPath}`);
       
       // Call exportMemoryBank function
       const exportResult = await exportMemoryBank(MEMORY_BANK_DIR, format, targetOutputPath);
@@ -638,10 +651,10 @@ server.tool(
   },
   async ({ projectPurpose, location }) => {
     try {
-      // Diagnostics: Log environment info
-      console.log(`Current working directory: ${process.cwd()}`);
-      console.log(`Node version: ${process.version}`);
-      console.log(`Platform: ${process.platform}`);
+      // Diagnostics: Log environment info only in debug mode
+      debugLog(`Current working directory: ${process.cwd()}`);
+      debugLog(`Node version: ${process.version}`);
+      debugLog(`Platform: ${process.platform}`);
       
       // Determine where to create the .github directory
       let baseDir;
@@ -655,22 +668,22 @@ server.tool(
           // If relative path is provided, resolve against current working directory
           baseDir = path.resolve(process.cwd(), location);
         }
-        console.log(`Using user specified base location: ${baseDir}`);
+        debugLog(`Using user specified base location: ${baseDir}`);
       } else {
         // If no location provided, use current working directory as base
         baseDir = process.cwd();
-        console.log(`No location specified, using current directory as base: ${baseDir}`);
+        debugLog(`No location specified, using current directory as base: ${baseDir}`);
       }
       
       // Create .github directory in the base directory
       const githubDir = path.join(baseDir, '.github');
-      console.log(`Will create VS Code Instructions at: ${githubDir}`);
+      debugLog(`Will create VS Code Instructions at: ${githubDir}`);
       
       // Ensure parent directory exists if needed
       const parentDir = path.dirname(githubDir);
       try {
         await fs.ensureDir(parentDir);
-        console.log(`Ensured parent directory exists: ${parentDir}`);
+        debugLog(`Ensured parent directory exists: ${parentDir}`);
       } catch (error) {
         console.error(`Error ensuring parent directory: ${error}`);
         throw new Error(`Cannot create or access parent directory: ${error}`);
@@ -679,7 +692,7 @@ server.tool(
       // Ensure .github directory exists
       try {
         await fs.ensureDir(githubDir);
-        console.log(`Created .github directory: ${githubDir}`);
+        debugLog(`Created .github directory: ${githubDir}`);
       } catch (error) {
         console.error(`Error creating .github directory: ${error}`);
         throw new Error(`Cannot create .github directory: ${error}`);
@@ -687,17 +700,17 @@ server.tool(
       
       // Create the copilot-instructions.md file
       const instructionsPath = path.join(githubDir, 'copilot-instructions.md');
-      console.log(`Will create copilot-instructions.md at: ${instructionsPath}`);
+      debugLog(`Will create copilot-instructions.md at: ${instructionsPath}`);
       
       // Generate content for the instructions file based on project purpose
-      console.log(`Generating VS Code copilot instructions for purpose: ${projectPurpose}`);
+      debugLog(`Generating VS Code copilot instructions for purpose: ${projectPurpose}`);
       try {
         const instructionsContent = await generateCopilotInstructions(projectPurpose);
         
         // Save the file
         try {
           await fs.writeFile(instructionsPath, instructionsContent, 'utf-8');
-          console.log(`Created copilot-instructions.md at: ${instructionsPath}`);
+          debugLog(`Created copilot-instructions.md at: ${instructionsPath}`);
         } catch (error) {
           console.error(`Error creating copilot-instructions.md file: ${error}`);
           throw new Error(`Cannot create copilot-instructions.md file: ${error}`);
@@ -787,9 +800,9 @@ export async function startServer(): Promise<void> {
   const transport = new StdioServerTransport();
   
   try {
-    console.log('Starting Memory Bank MCP server...');
+    debugLog('Starting Memory Bank MCP server...');
     await server.connect(transport);
-    console.log('Memory Bank MCP server successfully started!');
+    debugLog('Memory Bank MCP server successfully started!');
   } catch (error) {
     console.error('Error starting server:', error);
     process.exit(1);
